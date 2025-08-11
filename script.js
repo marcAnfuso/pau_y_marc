@@ -63,6 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
           btnNext?.toggleAttribute('hidden', atEnd);
         }
         restartBtn?.toggleAttribute('hidden', !atEnd);
+
+          // Ocultar footer en portada o final
+        const footerEl = document.getElementById('albumFooter');
+        if (footerEl) {
+            footerEl.style.display = (atStart || atEnd) ? 'none' : '';
+        }
       }
   
       try { flip.on('flip', updateNav); } catch(_) {}
@@ -78,10 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Botón "Volver a ver"
       restartBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
-        flip.turnToPage(1);
+        flip.turnToPage(0);                 // ⬅️ antes 1, ahora 0 (portada)
         updateNav();
         setTimeout(() => albumEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
-      });
+    });
+  
   
       // Resize/orientación
       let t;
