@@ -303,3 +303,10 @@ body {
     line-height: 1.5;
   }
   
+  @media (max-width: 768px){
+    .nav-btn{ display: none !important; } /* oculta ◀ ▶ en móvil */
+  }
+
+  @media (max-width: 768px){ .nav-btn{ display: none !important; } }
+
+  
