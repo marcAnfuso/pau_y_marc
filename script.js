@@ -64,10 +64,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         restartBtn?.toggleAttribute('hidden', !atEnd);
 
-          // Ocultar footer en portada o final
-        const footerEl = document.getElementById('albumFooter');
-        if (footerEl) {
-            footerEl.style.display = (atStart || atEnd) ? 'none' : '';
+        const footer = document.getElementById('albumFooter');
+        if (footer) {
+          if (atStart || atEnd) {
+            footer.classList.remove('visible');
+            setTimeout(() => footer.hidden = true, 300); // espera que termine fade
+          } else {
+            footer.hidden = false;
+            setTimeout(() => footer.classList.add('visible'), 50); // delay para animar
+          }
         }
       }
   
@@ -103,3 +108,28 @@ document.addEventListener('DOMContentLoaded', () => {
     initFlip();
   });
   
+  function startHeartRain() {
+    const container = document.getElementById('heartRain');
+    let interval = setInterval(() => {
+      const heart = document.createElement('span');
+      heart.classList.add('heart');
+      heart.textContent = '❤️';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+      heart.style.animationDuration = (Math.random() * 1 + 1.5) + 's';
+      container.appendChild(heart);
+  
+      setTimeout(() => {
+        heart.remove();
+      }, 2000);
+    }, 50);
+  
+    // Parar después de 2 segundos
+    setTimeout(() => {
+      clearInterval(interval);
+      setTimeout(() => container.remove(), 2000); // quitar div
+    }, 4000);
+  }
+  
+  // Iniciar apenas carga
+  document.addEventListener('DOMContentLoaded', startHeartRain);
