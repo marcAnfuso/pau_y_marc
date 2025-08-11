@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const enterBtn   = document.getElementById('enterBtn');
     const albumEl    = document.getElementById('album');
     const btnPrev    = document.querySelector('.nav-prev');
     const btnNext    = document.querySelector('.nav-next');
     const restartBtn = document.getElementById('restartBtn');
+    const tapLeft    = document.querySelector('.tap-left');
+    const tapRight   = document.querySelector('.tap-right');
   
     let flip = null;
     const mqMobile = window.matchMedia('(max-width: 768px)');
@@ -29,9 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
         minHeight: 420,
         maxHeight: 1200,
         maxShadowOpacity: isMobile ? 0.2 : 0.3,
-        showCover: true,                 // portada sola
+        showCover: true,
         flippingTime: isMobile ? 800 : 1050, // más lento
-        usePortrait: true,               // 1 página en vertical
+        usePortrait: true,
         startZIndex: 10,
         autoSize: true
       });
@@ -39,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
       // Cargar páginas
       flip.loadFromHTML(albumEl.querySelectorAll('.page'));
   
-      // ---- Navegación según página actual ----
       const pagesTotal = albumEl.querySelectorAll('.page').length;
   
       function getIndexSafe() {
@@ -56,61 +56,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const atEnd   = i >= pagesTotal - 1;
   
         if (mqMobile.matches) {
-          // En móvil: flechas siempre ocultas; solo tap en costados
           btnPrev?.setAttribute('hidden', '');
           btnNext?.setAttribute('hidden', '');
         } else {
-          // En desktop: ocultar flechas en inicio/fin
           btnPrev?.toggleAttribute('hidden', atStart || atEnd);
           btnNext?.toggleAttribute('hidden', atEnd);
         }
-  
-        // Botón "Volver a ver el álbum" solo al final
         restartBtn?.toggleAttribute('hidden', !atEnd);
       }
   
-      // Evento de cambio de página (si está disponible)
       try { flip.on('flip', updateNav); } catch(_) {}
   
-      // Flechas internas (desktop)
+      // Botones flecha (desktop)
       btnPrev?.addEventListener('click', (e) => { e.stopPropagation(); flip.flipPrev(); updateNav(); });
       btnNext?.addEventListener('click', (e) => { e.stopPropagation(); flip.flipNext(); updateNav(); });
   
-      // Tap/click en los lados del álbum
-      albumEl.addEventListener('click', (e) => {
-        if (e.target.closest('.nav-btn') || e.target.closest('#restartBtn')) return;
-        const rect = albumEl.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        if (x < rect.width / 2) flip.flipPrev(); else flip.flipNext();
-        updateNav();
-      });
+      // Zonas táctiles invisibles (mobile)
+      tapLeft?.addEventListener('click',  (e) => { e.stopPropagation(); flip.flipPrev(); updateNav(); });
+      tapRight?.addEventListener('click', (e) => { e.stopPropagation(); flip.flipNext(); updateNav(); });
   
-      // Botón "Volver a ver el álbum"
+      // Botón "Volver a ver"
       restartBtn?.addEventListener('click', (e) => {
         e.stopPropagation();
-        // Ir a la primera página después de la portada
         flip.turnToPage(1);
         updateNav();
         setTimeout(() => albumEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
       });
   
-      // Mantener estable en resize/orientación
+      // Resize/orientación
       let t;
       const safeUpdate = () => { try { flip.update(); updateNav(); } catch(_){} };
       window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(safeUpdate, 120); });
       mqMobile.addEventListener?.('change', safeUpdate);
   
-      // Estado inicial
       updateNav();
     }
   
-    // Botón “Abrir álbum”
-    enterBtn?.addEventListener('click', () => {
-      initFlip();
-      setTimeout(() => albumEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
-    });
-  
-    // Auto-iniciar también (por si no tocan el botón)
+    // Auto-iniciar
     initFlip();
   });
   
