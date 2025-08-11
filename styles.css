@@ -309,4 +309,18 @@ body {
 
   @media (max-width: 768px){ .nav-btn{ display: none !important; } }
 
+  /* Zonas táctiles invisibles para avanzar/retroceder (solo mobile) */
+.tap-zone{
+    position:absolute; top:0; bottom:0; width:50%;
+    z-index: 1000; /* por encima de las páginas, debajo de botones visibles */
+    background: transparent;
+  }
+  .tap-left { left:0; }
+  .tap-right{ right:0; }
+  
+  /* Solo en mobile; en desktop no hacen falta */
+  @media (min-width: 769px){
+    .tap-zone{ display:none; }
+  }
+  
   
